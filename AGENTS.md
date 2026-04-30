@@ -51,3 +51,4 @@ The command was run successfully after the package/source-layout migration with 
 - X integration currently uses `Intent.ACTION_SEND` and the Android sharesheet; it does not use X API authentication.
 - When generating or editing any text file (source code, configuration, JSON, Markdown, etc.), always end the file with a trailing newline.
 - When performing work that modifies files, always operate inside a git worktree (e.g. via the EnterWorktree tool or `git worktree add`) instead of editing the primary working directory directly.
+- At the start of each session and before every commit or push, always fetch `origin/main` and merge any changes into the working branch.
