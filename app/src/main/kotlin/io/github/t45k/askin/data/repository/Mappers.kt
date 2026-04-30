@@ -14,6 +14,7 @@ import io.github.t45k.askin.domain.model.TrainingRecord
 fun CategoryEntity.toDomain(): Category = Category(
     id = id,
     name = name,
+    description = description,
     displayOrder = displayOrder,
     isActive = isActive,
 )
@@ -22,6 +23,7 @@ fun ExerciseEntity.toDomain(): Exercise = Exercise(
     id = id,
     categoryId = categoryId,
     name = name,
+    description = description,
     displayOrder = displayOrder,
     isActive = isActive,
 )

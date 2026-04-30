@@ -1,5 +1,9 @@
 package io.github.t45k.askin
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +46,9 @@ import io.github.t45k.askin.ui.today.TodayScreen
 import io.github.t45k.askin.ui.today.TodayViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+
+private const val ScreenTransitionDurationMillis = 120
+private const val ScreenTransitionOffsetDivisor = 4
 
 @Composable
 fun AskinApp() {
@@ -120,6 +127,42 @@ fun AskinApp() {
                     navController = navController,
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
+                    enterTransition = {
+                        slideInHorizontally(
+                            initialOffsetX = { it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    exitTransition = {
+                        slideOutHorizontally(
+                            targetOffsetX = { -it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popEnterTransition = {
+                        slideInHorizontally(
+                            initialOffsetX = { -it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popExitTransition = {
+                        slideOutHorizontally(
+                            targetOffsetX = { it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
                 ) {
                     composable("today") {
                         TodayScreen(
@@ -179,8 +222,8 @@ fun AskinApp() {
                     composable("category/new") {
                         CategoryEditScreen(
                             category = null,
-                            onSave = { name, displayOrder ->
-                                masterViewModel.addCategory(name, displayOrder)
+                            onSave = { name, description, displayOrder ->
+                                masterViewModel.addCategory(name, description, displayOrder)
                                 navController.popBackStack()
                             },
                             onDelete = null,
@@ -195,8 +238,8 @@ fun AskinApp() {
                         val category = masterUiState.categories.firstOrNull { it.category.id == categoryId }?.category
                         CategoryEditScreen(
                             category = category,
-                            onSave = { name, displayOrder ->
-                                masterViewModel.updateCategory(categoryId, name, displayOrder)
+                            onSave = { name, description, displayOrder ->
+                                masterViewModel.updateCategory(categoryId, name, description, displayOrder)
                                 navController.popBackStack()
                             },
                             onDelete = {
@@ -215,8 +258,8 @@ fun AskinApp() {
                             exercise = null,
                             categories = masterUiState.categories.map { it.category },
                             initialCategoryId = categoryId,
-                            onSave = { name, selectedCategoryId, displayOrder ->
-                                masterViewModel.addExercise(name, selectedCategoryId, displayOrder)
+                            onSave = { name, description, selectedCategoryId, displayOrder ->
+                                masterViewModel.addExercise(name, description, selectedCategoryId, displayOrder)
                                 navController.popBackStack()
                             },
                             onDelete = null,
@@ -235,8 +278,8 @@ fun AskinApp() {
                             exercise = exercise,
                             categories = masterUiState.categories.map { it.category },
                             initialCategoryId = exercise?.categoryId,
-                            onSave = { name, categoryId, displayOrder ->
-                                masterViewModel.updateExercise(exerciseId, name, categoryId, displayOrder)
+                            onSave = { name, description, categoryId, displayOrder ->
+                                masterViewModel.updateExercise(exerciseId, name, description, categoryId, displayOrder)
                                 navController.popBackStack()
                             },
                             onDelete = {

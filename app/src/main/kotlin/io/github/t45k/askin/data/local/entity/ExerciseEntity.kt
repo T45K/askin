@@ -27,6 +27,7 @@ data class ExerciseEntity(
     @ColumnInfo(name = "category_id")
     val categoryId: Long,
     val name: String,
+    val description: String = "",
     @ColumnInfo(name = "display_order")
     val displayOrder: Int,
     @ColumnInfo(name = "is_active")

@@ -4,6 +4,7 @@ data class Exercise(
     val id: Long,
     val categoryId: Long,
     val name: String,
+    val description: String = "",
     val displayOrder: Int,
     val isActive: Boolean,
 )

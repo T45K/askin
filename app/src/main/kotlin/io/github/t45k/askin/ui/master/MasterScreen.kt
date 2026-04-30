@@ -93,6 +93,13 @@ fun MasterScreen(
                                     }
                                 }
                             }
+                            if (categoryWithExercises.category.description.isNotBlank()) {
+                                Text(
+                                    text = categoryWithExercises.category.description,
+                                    color = Color(0xFF6D4C41),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
 
                             if (categoryWithExercises.exercises.isEmpty()) {
                                 Text("種目はまだありません", color = Color(0xFF8D6E63))
@@ -102,7 +109,16 @@ fun MasterScreen(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                     ) {
-                                        Text("・${exercise.name}")
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text("・${exercise.name}")
+                                            if (exercise.description.isNotBlank()) {
+                                                Text(
+                                                    text = exercise.description,
+                                                    color = Color(0xFF8D6E63),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                )
+                                            }
+                                        }
                                         OutlinedButton(onClick = { onEditExerciseClick(exercise.id) }) {
                                             Text("編集")
                                         }
