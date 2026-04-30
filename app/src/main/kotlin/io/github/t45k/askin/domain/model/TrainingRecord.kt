@@ -1,7 +1,7 @@
 package io.github.t45k.askin.domain.model
 
-import java.time.Instant
-import java.time.LocalDate
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
 
 data class TrainingRecord(
     val id: Long,

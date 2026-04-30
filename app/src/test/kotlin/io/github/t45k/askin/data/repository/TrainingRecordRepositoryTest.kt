@@ -7,6 +7,9 @@ import io.github.t45k.askin.data.local.AppDatabase
 import io.github.t45k.askin.data.local.entity.CategoryEntity
 import io.github.t45k.askin.data.local.entity.ExerciseEntity
 import kotlinx.coroutines.test.runTest
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -15,10 +18,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
 class TrainingRecordRepositoryTest {
@@ -40,7 +39,7 @@ class TrainingRecordRepositoryTest {
     @Test
     fun addRepsAddsToExistingDailyExerciseRecord() = runTest {
         val exerciseId = insertExercise(name = "腕立て伏せ", categoryName = "胸")
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
         val repository = createRepository()
 
         repository.addReps(date, exerciseId, 30)
@@ -59,7 +58,7 @@ class TrainingRecordRepositoryTest {
     fun addRepsKeepsDifferentExercisesSeparate() = runTest {
         val pushUpId = insertExercise(name = "腕立て伏せ", displayOrder = 1)
         val squatId = insertExercise(name = "スクワット", displayOrder = 2)
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
         val repository = createRepository()
 
         repository.addReps(date, pushUpId, 30)
@@ -75,7 +74,7 @@ class TrainingRecordRepositoryTest {
     @Test
     fun addRepsRejectsZeroOrNegativeReps() = runTest {
         val exerciseId = insertExercise(name = "腕立て伏せ")
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
         val repository = createRepository()
 
         try {
@@ -94,7 +93,7 @@ class TrainingRecordRepositoryTest {
     fun addRepsKeepsExerciseNameSnapshotAfterMasterDeletion() = runTest {
         val categoryId = insertCategory(name = "胸", displayOrder = 1)
         val exerciseId = insertExercise(categoryId = categoryId, name = "腕立て伏せ", displayOrder = 1)
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
         val repository = createRepository()
         val masterRepository = createMasterRepository()
 
@@ -112,7 +111,7 @@ class TrainingRecordRepositoryTest {
     fun addRepsKeepsCategoryNameSnapshotAfterCategoryDeletion() = runTest {
         val categoryId = insertCategory(name = "脚", displayOrder = 1)
         val exerciseId = insertExercise(categoryId = categoryId, name = "スクワット", displayOrder = 1)
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
         val repository = createRepository()
         val masterRepository = createMasterRepository()
 
@@ -166,9 +165,8 @@ class TrainingRecordRepositoryTest {
     )
 
     private companion object {
-        val fixedClock: Clock = Clock.fixed(
-            Instant.parse("2026-04-30T10:00:00Z"),
-            ZoneId.of("UTC"),
-        )
+        val fixedClock: Clock = object : Clock {
+            override fun now(): Instant = Instant.parse("2026-04-30T10:00:00Z")
+        }
     }
 }
