@@ -83,13 +83,14 @@ class RecordEditViewModel(
         fun factory(database: AppDatabase, initialDate: LocalDate): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val trainingRecordRepository = TrainingRecordRepository(database.trainingRecordDao())
+                val masterRepository = MasterRepository(
+                    database = database,
+                    categoryDao = database.categoryDao(),
+                    exerciseDao = database.exerciseDao(),
+                )
+                val trainingRecordRepository = TrainingRecordRepository(database.trainingRecordDao(), masterRepository)
                 return RecordEditViewModel(
-                    masterRepository = MasterRepository(
-                        database = database,
-                        categoryDao = database.categoryDao(),
-                        exerciseDao = database.exerciseDao(),
-                    ),
+                    masterRepository = masterRepository,
                     addTrainingRecordUseCase = AddTrainingRecordUseCase(trainingRecordRepository),
                     initialDate = initialDate,
                 ) as T

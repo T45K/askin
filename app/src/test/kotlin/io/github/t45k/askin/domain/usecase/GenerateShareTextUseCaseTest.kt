@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import io.github.t45k.askin.data.local.AppDatabase
 import io.github.t45k.askin.data.local.entity.CategoryEntity
 import io.github.t45k.askin.data.local.entity.ExerciseEntity
+import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -30,7 +31,11 @@ class GenerateShareTextUseCaseTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        repository = TrainingRecordRepository(
+            trainingRecordDao = database.trainingRecordDao(),
+            masterRepository = createMasterRepository(),
+            clock = fixedClock,
+        )
     }
 
     @After
@@ -79,6 +84,12 @@ class GenerateShareTextUseCaseTest {
         val categoryId = database.categoryDao().insert(CategoryEntity(name = categoryName, displayOrder = displayOrder))
         return database.exerciseDao().insert(ExerciseEntity(name = name, categoryId = categoryId, displayOrder = displayOrder))
     }
+
+    private fun createMasterRepository(): MasterRepository = MasterRepository(
+        database = database,
+        categoryDao = database.categoryDao(),
+        exerciseDao = database.exerciseDao(),
+    )
 
     private companion object {
         val fixedClock: Clock = Clock.fixed(

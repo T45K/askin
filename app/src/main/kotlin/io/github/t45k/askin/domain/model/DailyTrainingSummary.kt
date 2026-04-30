@@ -9,7 +9,6 @@ data class DailyTrainingSummary(
 )
 
 data class DailyTrainingRecord(
-    val exerciseId: Long,
     val exerciseName: String,
     val categoryName: String,
     val reps: Int,

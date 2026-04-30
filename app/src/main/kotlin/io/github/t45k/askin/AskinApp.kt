@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import io.github.t45k.askin.domain.usecase.GenerateShareTextUseCase
 import io.github.t45k.askin.share.XShareLauncher
@@ -55,8 +56,15 @@ fun AskinApp() {
     val context = LocalContext.current
     val application = context.applicationContext as AskinApplication
     val coroutineScope = rememberCoroutineScope()
+    val masterRepository = remember(application.database) {
+        MasterRepository(
+            database = application.database,
+            categoryDao = application.database.categoryDao(),
+            exerciseDao = application.database.exerciseDao(),
+        )
+    }
     val shareTextUseCase = remember(application.database) {
-        GenerateShareTextUseCase(TrainingRecordRepository(application.database.trainingRecordDao()))
+        GenerateShareTextUseCase(TrainingRecordRepository(application.database.trainingRecordDao(), masterRepository))
     }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -218,7 +226,7 @@ fun AskinApp() {
                                 masterViewModel.addCategory(name, description, displayOrder)
                                 navController.popBackStack()
                             },
-                            onDeactivate = null,
+                            onDelete = null,
                             onBack = { navController.popBackStack() },
                         )
                     }
@@ -234,8 +242,8 @@ fun AskinApp() {
                                 masterViewModel.updateCategory(categoryId, name, description, displayOrder)
                                 navController.popBackStack()
                             },
-                            onDeactivate = {
-                                masterViewModel.deactivateCategory(categoryId)
+                            onDelete = {
+                                masterViewModel.deleteCategory(categoryId)
                                 navController.popBackStack()
                             },
                             onBack = { navController.popBackStack() },
@@ -254,7 +262,7 @@ fun AskinApp() {
                                 masterViewModel.addExercise(name, description, selectedCategoryId, displayOrder)
                                 navController.popBackStack()
                             },
-                            onDeactivate = null,
+                            onDelete = null,
                             onBack = { navController.popBackStack() },
                         )
                     }
@@ -274,8 +282,8 @@ fun AskinApp() {
                                 masterViewModel.updateExercise(exerciseId, name, description, categoryId, displayOrder)
                                 navController.popBackStack()
                             },
-                            onDeactivate = {
-                                masterViewModel.deactivateExercise(exerciseId)
+                            onDelete = {
+                                masterViewModel.deleteExercise(exerciseId)
                                 navController.popBackStack()
                             },
                             onBack = { navController.popBackStack() },

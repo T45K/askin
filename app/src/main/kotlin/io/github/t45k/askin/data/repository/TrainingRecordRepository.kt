@@ -11,22 +11,28 @@ import java.time.LocalDate
 
 class TrainingRecordRepository(
     private val trainingRecordDao: TrainingRecordDao,
+    private val masterRepository: MasterRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) {
     suspend fun addReps(date: LocalDate, exerciseId: Long, reps: Int) {
         require(reps > 0) { "Reps must be greater than zero." }
         require(exerciseId > 0) { "Exercise id must be greater than zero." }
+        val exercise = requireNotNull(masterRepository.getExercise(exerciseId)) { "Exercise was not found." }
+        val category = requireNotNull(masterRepository.getCategory(exercise.categoryId)) { "Category was not found." }
 
         trainingRecordDao.addReps(
             date = date,
-            exerciseId = exerciseId,
+            categoryName = category.name,
+            exerciseName = exercise.name,
+            categoryDisplayOrder = category.displayOrder,
+            exerciseDisplayOrder = exercise.displayOrder,
             additionalReps = reps,
             now = clock.instant(),
         )
     }
 
-    suspend fun getRecord(date: LocalDate, exerciseId: Long): TrainingRecord? = trainingRecordDao
-        .getRecord(date, exerciseId)
+    suspend fun getRecord(date: LocalDate, categoryName: String, exerciseName: String): TrainingRecord? = trainingRecordDao
+        .getRecord(date, categoryName, exerciseName)
         ?.toDomain()
 
     fun observeDailySummary(date: LocalDate): Flow<DailyTrainingSummary> = trainingRecordDao

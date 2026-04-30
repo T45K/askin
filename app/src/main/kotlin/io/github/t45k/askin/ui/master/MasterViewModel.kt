@@ -53,8 +53,8 @@ class MasterViewModel(
         masterRepository.updateCategory(id, name, description, displayOrder)
     }
 
-    fun deactivateCategory(id: Long) = launchWithError {
-        masterRepository.deactivateCategory(id)
+    fun deleteCategory(id: Long) = launchWithError {
+        masterRepository.deleteCategory(id)
     }
 
     fun addExercise(name: String, description: String, categoryId: Long, displayOrder: Int) = launchWithError {
@@ -65,8 +65,8 @@ class MasterViewModel(
         masterRepository.updateExercise(id, name, description, categoryId, displayOrder)
     }
 
-    fun deactivateExercise(id: Long) = launchWithError {
-        masterRepository.deactivateExercise(id)
+    fun deleteExercise(id: Long) = launchWithError {
+        masterRepository.deleteExercise(id)
     }
 
     fun clearError() {

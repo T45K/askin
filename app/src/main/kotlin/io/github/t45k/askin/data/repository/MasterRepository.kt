@@ -32,6 +32,16 @@ class MasterRepository(
         .getActiveExercises()
         .map { it.toDomain() }
 
+    suspend fun getCategory(id: Long): Category? {
+        validateId(id, "Category id")
+        return categoryDao.getById(id)?.toDomain()
+    }
+
+    suspend fun getExercise(id: Long): Exercise? {
+        validateId(id, "Exercise id")
+        return exerciseDao.getById(id)?.toDomain()
+    }
+
     suspend fun addCategory(name: String, description: String, displayOrder: Int): Long {
         validateName(name, "Category name")
         return categoryDao.insert(
@@ -57,11 +67,11 @@ class MasterRepository(
         )
     }
 
-    suspend fun deactivateCategory(id: Long) {
+    suspend fun deleteCategory(id: Long) {
         validateId(id, "Category id")
         database.withTransaction {
-            categoryDao.deactivate(id)
-            exerciseDao.deactivateByCategoryId(id)
+            exerciseDao.deleteByCategoryId(id)
+            categoryDao.delete(id)
         }
     }
 
@@ -96,9 +106,9 @@ class MasterRepository(
         )
     }
 
-    suspend fun deactivateExercise(id: Long) {
+    suspend fun deleteExercise(id: Long) {
         validateId(id, "Exercise id")
-        exerciseDao.deactivate(id)
+        exerciseDao.delete(id)
     }
 
     private fun validateName(name: String, label: String) {

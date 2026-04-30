@@ -2,7 +2,6 @@ package io.github.t45k.askin.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.Instant
@@ -10,25 +9,22 @@ import java.time.LocalDate
 
 @Entity(
     tableName = "training_records",
-    foreignKeys = [
-        ForeignKey(
-            entity = ExerciseEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["exercise_id"],
-            onDelete = ForeignKey.RESTRICT,
-        ),
-    ],
     indices = [
-        Index(value = ["exercise_id"]),
-        Index(value = ["date", "exercise_id"], unique = true),
+        Index(value = ["date", "category_name", "exercise_name"], unique = true),
     ],
 )
 data class TrainingRecordEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val date: LocalDate,
-    @ColumnInfo(name = "exercise_id")
-    val exerciseId: Long,
+    @ColumnInfo(name = "category_name")
+    val categoryName: String,
+    @ColumnInfo(name = "exercise_name")
+    val exerciseName: String,
+    @ColumnInfo(name = "category_display_order")
+    val categoryDisplayOrder: Int,
+    @ColumnInfo(name = "exercise_display_order")
+    val exerciseDisplayOrder: Int,
     val reps: Int,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant,

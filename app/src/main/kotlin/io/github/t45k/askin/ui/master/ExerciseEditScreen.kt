@@ -32,7 +32,7 @@ fun ExerciseEditScreen(
     categories: List<Category>,
     initialCategoryId: Long?,
     onSave: (name: String, description: String, categoryId: Long, displayOrder: Int) -> Unit,
-    onDeactivate: (() -> Unit)?,
+    onDelete: (() -> Unit)?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -98,9 +98,9 @@ fun ExerciseEditScreen(
             OutlinedButton(onClick = onBack) {
                 Text("戻る")
             }
-            if (onDeactivate != null) {
-                OutlinedButton(onClick = onDeactivate) {
-                    Text("非表示")
+            if (onDelete != null) {
+                OutlinedButton(onClick = onDelete) {
+                    Text("削除")
                 }
             }
         }

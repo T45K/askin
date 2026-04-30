@@ -71,7 +71,7 @@ fun TodayScreen(
             Text("今日の筋トレを記録しましょう", color = Color(0xFF6D4C41))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(uiState.records, key = { it.exerciseId }) { record ->
+                items(uiState.records, key = { "${it.categoryName}:${it.exerciseName}" }) { record ->
                     Card(colors = CardDefaults.cardColors(containerColor = Color.White)) {
                         Row(
                             modifier = Modifier

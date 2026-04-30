@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.github.t45k.askin.data.local.AppDatabase
+import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import io.github.t45k.askin.domain.model.DailyTrainingRecord
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,8 +47,13 @@ class TodayViewModel(
         fun factory(database: AppDatabase): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val masterRepository = MasterRepository(
+                    database = database,
+                    categoryDao = database.categoryDao(),
+                    exerciseDao = database.exerciseDao(),
+                )
                 return TodayViewModel(
-                    TrainingRecordRepository(database.trainingRecordDao()),
+                    TrainingRecordRepository(database.trainingRecordDao(), masterRepository),
                 ) as T
             }
         }

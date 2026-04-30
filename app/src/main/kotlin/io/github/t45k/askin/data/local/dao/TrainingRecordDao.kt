@@ -23,12 +23,14 @@ interface TrainingRecordDao {
         SET reps = reps + :additionalReps,
             updated_at = :updatedAt
         WHERE date = :date
-          AND exercise_id = :exerciseId
+          AND category_name = :categoryName
+          AND exercise_name = :exerciseName
         """,
     )
     suspend fun incrementReps(
         date: LocalDate,
-        exerciseId: Long,
+        categoryName: String,
+        exerciseName: String,
         additionalReps: Int,
         updatedAt: Instant,
     ): Int
@@ -36,14 +38,20 @@ interface TrainingRecordDao {
     @Transaction
     suspend fun addReps(
         date: LocalDate,
-        exerciseId: Long,
+        categoryName: String,
+        exerciseName: String,
+        categoryDisplayOrder: Int,
+        exerciseDisplayOrder: Int,
         additionalReps: Int,
         now: Instant,
     ) {
         val insertedId = insert(
             TrainingRecordEntity(
                 date = date,
-                exerciseId = exerciseId,
+                categoryName = categoryName,
+                exerciseName = exerciseName,
+                categoryDisplayOrder = categoryDisplayOrder,
+                exerciseDisplayOrder = exerciseDisplayOrder,
                 reps = additionalReps,
                 createdAt = now,
                 updatedAt = now,
@@ -53,15 +61,24 @@ interface TrainingRecordDao {
         if (insertedId == -1L) {
             incrementReps(
                 date = date,
-                exerciseId = exerciseId,
+                categoryName = categoryName,
+                exerciseName = exerciseName,
                 additionalReps = additionalReps,
                 updatedAt = now,
             )
         }
     }
 
-    @Query("SELECT * FROM training_records WHERE date = :date AND exercise_id = :exerciseId")
-    suspend fun getRecord(date: LocalDate, exerciseId: Long): TrainingRecordEntity?
+    @Query(
+        """
+        SELECT *
+        FROM training_records
+        WHERE date = :date
+          AND category_name = :categoryName
+          AND exercise_name = :exerciseName
+        """,
+    )
+    suspend fun getRecord(date: LocalDate, categoryName: String, exerciseName: String): TrainingRecordEntity?
 
     @Query("SELECT COALESCE(SUM(reps), 0) FROM training_records WHERE date = :date")
     suspend fun getTotalRepsForDate(date: LocalDate): Int
@@ -80,15 +97,12 @@ interface TrainingRecordDao {
     @Query(
         """
         SELECT tr.date AS date,
-               tr.exercise_id AS exercise_id,
-               e.name AS exercise_name,
-               c.name AS category_name,
+               tr.exercise_name AS exercise_name,
+               tr.category_name AS category_name,
                tr.reps AS reps
         FROM training_records AS tr
-        INNER JOIN exercises AS e ON e.id = tr.exercise_id
-        INNER JOIN categories AS c ON c.id = e.category_id
         WHERE tr.date = :date
-        ORDER BY c.display_order, e.display_order, e.id
+        ORDER BY tr.category_display_order, tr.exercise_display_order, tr.id
         """,
     )
     fun observeDailyExerciseRecords(date: LocalDate): Flow<List<DailyExerciseRecordEntity>>
@@ -96,15 +110,12 @@ interface TrainingRecordDao {
     @Query(
         """
         SELECT tr.date AS date,
-               tr.exercise_id AS exercise_id,
-               e.name AS exercise_name,
-               c.name AS category_name,
+               tr.exercise_name AS exercise_name,
+               tr.category_name AS category_name,
                tr.reps AS reps
         FROM training_records AS tr
-        INNER JOIN exercises AS e ON e.id = tr.exercise_id
-        INNER JOIN categories AS c ON c.id = e.category_id
         WHERE tr.date = :date
-        ORDER BY c.display_order, e.display_order, e.id
+        ORDER BY tr.category_display_order, tr.exercise_display_order, tr.id
         """,
     )
     suspend fun getDailyExerciseRecords(date: LocalDate): List<DailyExerciseRecordEntity>
