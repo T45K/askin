@@ -12,8 +12,8 @@ import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import io.github.t45k.askin.domain.usecase.AddTrainingRecordUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals

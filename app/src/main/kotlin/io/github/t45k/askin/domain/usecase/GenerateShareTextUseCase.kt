@@ -1,7 +1,7 @@
 package io.github.t45k.askin.domain.usecase
 
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn

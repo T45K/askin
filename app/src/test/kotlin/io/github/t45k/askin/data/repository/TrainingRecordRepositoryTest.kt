@@ -7,8 +7,8 @@ import io.github.t45k.askin.data.local.AppDatabase
 import io.github.t45k.askin.data.local.entity.CategoryEntity
 import io.github.t45k.askin.data.local.entity.ExerciseEntity
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals

@@ -1,7 +1,7 @@
 package io.github.t45k.askin.data.local
 
 import androidx.room.TypeConverter
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 
 class Converters {

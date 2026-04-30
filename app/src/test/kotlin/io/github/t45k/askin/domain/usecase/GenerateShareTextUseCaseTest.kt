@@ -9,8 +9,8 @@ import io.github.t45k.askin.data.local.entity.ExerciseEntity
 import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import org.junit.After

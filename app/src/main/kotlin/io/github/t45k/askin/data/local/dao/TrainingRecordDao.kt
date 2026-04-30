@@ -9,7 +9,7 @@ import io.github.t45k.askin.data.local.entity.DailyTotalEntity
 import io.github.t45k.askin.data.local.entity.DailyExerciseRecordEntity
 import io.github.t45k.askin.data.local.entity.TrainingRecordEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 
 @Dao

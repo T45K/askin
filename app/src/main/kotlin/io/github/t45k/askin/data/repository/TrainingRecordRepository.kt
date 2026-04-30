@@ -6,7 +6,7 @@ import io.github.t45k.askin.domain.model.DailyTotal
 import io.github.t45k.askin.domain.model.TrainingRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 
 class TrainingRecordRepository(
