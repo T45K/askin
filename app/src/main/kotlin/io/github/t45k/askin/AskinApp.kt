@@ -1,5 +1,9 @@
 package io.github.t45k.askin
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +45,9 @@ import io.github.t45k.askin.ui.today.TodayScreen
 import io.github.t45k.askin.ui.today.TodayViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+
+private const val ScreenTransitionDurationMillis = 120
+private const val ScreenTransitionOffsetDivisor = 4
 
 @Composable
 fun AskinApp() {
@@ -112,6 +119,42 @@ fun AskinApp() {
                     navController = navController,
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
+                    enterTransition = {
+                        slideInHorizontally(
+                            initialOffsetX = { it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    exitTransition = {
+                        slideOutHorizontally(
+                            targetOffsetX = { -it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popEnterTransition = {
+                        slideInHorizontally(
+                            initialOffsetX = { -it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popExitTransition = {
+                        slideOutHorizontally(
+                            targetOffsetX = { it / ScreenTransitionOffsetDivisor },
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
                 ) {
                     composable("today") {
                         TodayScreen(
