@@ -6,13 +6,13 @@ import io.github.t45k.askin.domain.model.DailyTotal
 import io.github.t45k.askin.domain.model.TrainingRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.Clock
-import java.time.LocalDate
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 
 class TrainingRecordRepository(
     private val trainingRecordDao: TrainingRecordDao,
     private val masterRepository: MasterRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock = Clock.System,
 ) {
     suspend fun addReps(date: LocalDate, exerciseId: Long, reps: Int) {
         require(reps > 0) { "Reps must be greater than zero." }
@@ -27,7 +27,7 @@ class TrainingRecordRepository(
             categoryDisplayOrder = category.displayOrder,
             exerciseDisplayOrder = exercise.displayOrder,
             additionalReps = reps,
-            now = clock.instant(),
+            now = clock.now(),
         )
     }
 

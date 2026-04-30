@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import java.time.Clock
-import java.time.LocalDate
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 data class TodayUiState(
-    val date: LocalDate = LocalDate.now(),
+    val date: LocalDate,
     val totalReps: Int = 0,
     val records: List<DailyTrainingRecord> = emptyList(),
     val isLoading: Boolean = false,
@@ -23,9 +25,10 @@ data class TodayUiState(
 
 class TodayViewModel(
     trainingRecordRepository: TrainingRecordRepository,
-    clock: Clock = Clock.systemDefaultZone(),
+    clock: Clock = Clock.System,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ) : ViewModel() {
-    private val today = LocalDate.now(clock)
+    private val today = clock.todayIn(timeZone)
 
     val uiState: StateFlow<TodayUiState> = trainingRecordRepository
         .observeDailySummary(today)

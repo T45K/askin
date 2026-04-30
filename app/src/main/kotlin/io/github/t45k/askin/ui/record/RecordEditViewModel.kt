@@ -15,10 +15,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 data class RecordEditUiState(
-    val dateText: String = LocalDate.now().toString(),
+    val dateText: String,
     val exercises: List<Exercise> = emptyList(),
     val selectedExerciseId: Long? = null,
     val repsText: String = "",
@@ -29,7 +32,7 @@ data class RecordEditUiState(
 class RecordEditViewModel(
     masterRepository: MasterRepository,
     private val addTrainingRecordUseCase: AddTrainingRecordUseCase,
-    initialDate: LocalDate = LocalDate.now(),
+    initialDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
 ) : ViewModel() {
     private val formState = MutableStateFlow(RecordEditUiState(dateText = initialDate.toString()))
 

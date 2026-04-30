@@ -2,7 +2,7 @@ package io.github.t45k.askin.domain.usecase
 
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import io.github.t45k.askin.domain.model.DailyTrainingSummary
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 class GetDailySummaryUseCase(
     private val trainingRecordRepository: TrainingRecordRepository,

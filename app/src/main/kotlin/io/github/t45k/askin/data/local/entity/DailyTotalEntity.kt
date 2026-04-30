@@ -1,7 +1,7 @@
 package io.github.t45k.askin.data.local.entity
 
 import androidx.room.ColumnInfo
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class DailyTotalEntity(
     val date: LocalDate,
