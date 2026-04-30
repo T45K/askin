@@ -1,7 +1,7 @@
 package io.github.t45k.askin.domain.usecase
 
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 class AddTrainingRecordUseCase(
     private val trainingRecordRepository: TrainingRecordRepository,

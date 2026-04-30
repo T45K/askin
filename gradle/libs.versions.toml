@@ -10,6 +10,7 @@ lifecycle = "2.11.0-beta01"
 navigationCompose = "2.10.0-alpha03"
 room = "2.8.4"
 coroutines = "1.11.0-rc02"
+kotlinxDatetime = "0.7.1"
 
 junit = "4.13.2"
 robolectric = "4.16.1"
@@ -41,6 +42,7 @@ androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "t
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [bundles]

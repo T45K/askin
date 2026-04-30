@@ -1,6 +1,6 @@
 package io.github.t45k.askin.domain.model
 
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class DailyTrainingSummary(
     val date: LocalDate,

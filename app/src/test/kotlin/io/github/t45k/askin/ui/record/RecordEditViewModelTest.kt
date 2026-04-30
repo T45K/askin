@@ -12,6 +12,9 @@ import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import io.github.t45k.askin.domain.usecase.AddTrainingRecordUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -20,10 +23,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
 class RecordEditViewModelTest {
@@ -53,7 +52,7 @@ class RecordEditViewModelTest {
         viewModel = RecordEditViewModel(
             masterRepository = masterRepository,
             addTrainingRecordUseCase = AddTrainingRecordUseCase(trainingRecordRepository),
-            initialDate = LocalDate.of(2026, 4, 30),
+            initialDate = LocalDate(2026, 4, 30),
         )
     }
 
@@ -78,7 +77,7 @@ class RecordEditViewModelTest {
         viewModel.save()
         viewModel.uiState.first { it.isSaved }
 
-        val summary = trainingRecordRepository.getDailySummary(LocalDate.of(2026, 4, 30))
+        val summary = trainingRecordRepository.getDailySummary(LocalDate(2026, 4, 30))
 
         assertEquals(50, summary.totalReps)
         assertEquals(50, summary.records.single().reps)
@@ -113,9 +112,8 @@ class RecordEditViewModelTest {
     }
 
     private companion object {
-        val fixedClock: Clock = Clock.fixed(
-            Instant.parse("2026-04-30T10:00:00Z"),
-            ZoneId.of("UTC"),
-        )
+        val fixedClock: Clock = object : Clock {
+            override fun now(): Instant = Instant.parse("2026-04-30T10:00:00Z")
+        }
     }
 }

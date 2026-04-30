@@ -45,7 +45,10 @@ import io.github.t45k.askin.ui.settings.SettingsScreen
 import io.github.t45k.askin.ui.today.TodayScreen
 import io.github.t45k.askin.ui.today.TodayViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import kotlin.time.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 private const val ScreenTransitionDurationMillis = 120
 private const val ScreenTransitionOffsetDivisor = 4
@@ -76,7 +79,8 @@ fun AskinApp() {
     val historyUiState by historyViewModel.uiState.collectAsStateWithLifecycle()
     fun shareDate(dateText: String) {
         coroutineScope.launch {
-            val date = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
+            val date = runCatching { LocalDate.parse(dateText) }
+                .getOrDefault(Clock.System.todayIn(TimeZone.currentSystemDefault()))
             XShareLauncher.launch(context, shareTextUseCase(date))
         }
     }
@@ -196,7 +200,8 @@ fun AskinApp() {
                         arguments = listOf(navArgument("date") { type = NavType.StringType }),
                     ) { backStackEntry ->
                         val dateText = backStackEntry.arguments?.getString("date").orEmpty()
-                        val initialDate = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
+                        val initialDate = runCatching { LocalDate.parse(dateText) }
+                            .getOrDefault(Clock.System.todayIn(TimeZone.currentSystemDefault()))
                         val recordViewModel: RecordEditViewModel = viewModel(
                             key = "record-$dateText",
                             factory = RecordEditViewModel.factory(application.database, initialDate),

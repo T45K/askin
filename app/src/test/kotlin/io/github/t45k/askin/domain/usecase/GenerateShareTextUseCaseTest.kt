@@ -9,16 +9,16 @@ import io.github.t45k.askin.data.local.entity.ExerciseEntity
 import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import kotlinx.coroutines.test.runTest
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
 class GenerateShareTextUseCaseTest {
@@ -47,12 +47,12 @@ class GenerateShareTextUseCaseTest {
     fun invokeGeneratesShareTextForDailySummary() = runTest {
         val pushUpId = insertExercise("腕立て伏せ", "胸", 1)
         val squatId = insertExercise("スクワット", "下半身", 2)
-        val date = LocalDate.of(2026, 4, 30)
+        val date = LocalDate(2026, 4, 30)
 
         repository.addReps(date, pushUpId, 30)
         repository.addReps(date, squatId, 60)
 
-        val shareText = GenerateShareTextUseCase(repository, fixedClock)(date)
+        val shareText = GenerateShareTextUseCase(repository, fixedClock, TimeZone.UTC)(date)
 
         assertEquals(
             """
@@ -68,7 +68,7 @@ class GenerateShareTextUseCaseTest {
 
     @Test
     fun invokeGeneratesShareTextForEmptyDay() = runTest {
-        val shareText = GenerateShareTextUseCase(repository, fixedClock)(LocalDate.of(2026, 4, 29))
+        val shareText = GenerateShareTextUseCase(repository, fixedClock, TimeZone.UTC)(LocalDate(2026, 4, 29))
 
         assertEquals(
             """
@@ -92,9 +92,8 @@ class GenerateShareTextUseCaseTest {
     )
 
     private companion object {
-        val fixedClock: Clock = Clock.fixed(
-            Instant.parse("2026-04-30T10:00:00Z"),
-            ZoneId.of("UTC"),
-        )
+        val fixedClock: Clock = object : Clock {
+            override fun now(): Instant = Instant.parse("2026-04-30T10:00:00Z")
+        }
     }
 }
