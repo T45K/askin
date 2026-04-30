@@ -49,3 +49,5 @@ The command was run successfully after the package/source-layout migration with 
 - If Room entities or the database package changes, update or regenerate the schema path under `app/schemas`.
 - This project is intended to remain a local-first Android MVP unless the user asks for cloud sync, authentication, or external API posting.
 - X integration currently uses `Intent.ACTION_SEND` and the Android sharesheet; it does not use X API authentication.
+- When generating or editing any text file (source code, configuration, JSON, Markdown, etc.), always end the file with a trailing newline.
+- When performing work that modifies files, always operate inside a git worktree (e.g. via the EnterWorktree tool or `git worktree add`) instead of editing the primary working directory directly.
