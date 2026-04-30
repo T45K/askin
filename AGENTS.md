@@ -10,7 +10,7 @@ This repository contains an Android MVP for a Japanese muscle-training rep track
 - Source files live under `app/src/main/kotlin` and tests live under `app/src/test/kotlin`.
 - The package, namespace, and application ID are `io.github.t45k.askin`.
 - Room schema output is stored under `app/schemas/io.github.t45k.askin.data.local.AppDatabase`.
-- Android Gradle Plugin is pinned to `9.0.0-alpha06` in the root `build.gradle.kts`.
+- Dependency versions (including the Android Gradle Plugin) are centralized in the Gradle version catalog at `gradle/libs.versions.toml` and referenced from `build.gradle.kts` files via `libs.*` accessors.
 - Generated text files were normalized to end with a trailing newline.
 
 ## Important Source Layout
@@ -33,13 +33,7 @@ This repository contains an Android MVP for a Japanese muscle-training rep track
 
 ## Build and Verification
 
-Use the following command for the current verification path:
-
-```shell
-gradle :app:testDebugUnitTest :app:assembleDebug
-```
-
-The command was run successfully after the package/source-layout migration with AGP `9.0.0-alpha06`.
+Run verification via the `/verify` skill (defined under `.claude/skills/verify/`), which invokes the canonical `gradle :app:testDebugUnitTest :app:assembleDebug` command from the project root.
 
 ## Notes for Future Agents
 
@@ -49,6 +43,4 @@ The command was run successfully after the package/source-layout migration with 
 - If Room entities or the database package changes, update or regenerate the schema path under `app/schemas`.
 - This project is intended to remain a local-first Android MVP unless the user asks for cloud sync, authentication, or external API posting.
 - X integration currently uses `Intent.ACTION_SEND` and the Android sharesheet; it does not use X API authentication.
-- When generating or editing any text file (source code, configuration, JSON, Markdown, etc.), always end the file with a trailing newline.
-- When performing work that modifies files, always operate inside a git worktree (e.g. via the EnterWorktree tool or `git worktree add`) instead of editing the primary working directory directly.
-- At the start of each session and before every commit or push, always fetch `origin/main` and merge any changes into the working branch.
+- When code changes introduce any contradiction with the contents of `AGENTS.md`, update `AGENTS.md` in the same change so the document stays consistent with the codebase.

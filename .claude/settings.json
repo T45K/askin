@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; case \"$f\" in /Users/t45k/prog/askin/.claude/worktrees/*) exit 0 ;; /Users/t45k/prog/askin-*) exit 0 ;; /Users/t45k/prog/askin/*) printf '%s\\n' '{\"continue\":false,\"stopReason\":\"Editing files inside the primary repo at /Users/t45k/prog/askin is blocked. Work inside a git worktree (.claude/worktrees/<name> or askin-<name>).\"}'; exit 0 ;; *) exit 0 ;; esac; }"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command' 2>/dev/null) || exit 0; echo \"$cmd\" | grep -qE '(^|[^a-zA-Z0-9_])git[[:space:]]+(commit|push)([[:space:]]|$)' || exit 0; root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; cd \"$root\" || exit 0; git fetch origin main >/dev/null 2>&1 && git merge origin/main --no-edit >/dev/null 2>&1 || { printf '%s\\n' '{\"continue\":false,\"stopReason\":\"git fetch/merge origin/main failed before commit/push. Resolve conflicts (or other issues) before retrying.\"}'; exit 0; }"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' 2>/dev/null | { read -r f; case \"$f\" in *.kt|*.kts|*.md|*.json|*.toml|*.xml|*.yml|*.yaml|*.gradle|*.properties|*.txt|*.gitignore|*.gitattributes|*.lock|*.cfg|*.conf|*.ini|*.sh) [ -f \"$f\" ] && [ -n \"$(tail -c 1 \"$f\")\" ] && printf '\\n' >> \"$f\" ;; esac; } 2>/dev/null; true"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "root=$(git rev-parse --show-toplevel 2>/dev/null); [ -n \"$root\" ] && cd \"$root\" && git fetch origin main >/dev/null 2>&1 && git merge --ff-only origin/main >/dev/null 2>&1; true"
+          }
+        ]
+      }
+    ]
+  }
+}
