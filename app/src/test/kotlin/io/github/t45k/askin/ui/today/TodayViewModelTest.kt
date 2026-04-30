@@ -7,6 +7,7 @@ import io.github.t45k.askin.MainDispatcherRule
 import io.github.t45k.askin.data.local.AppDatabase
 import io.github.t45k.askin.data.local.entity.CategoryEntity
 import io.github.t45k.askin.data.local.entity.ExerciseEntity
+import io.github.t45k.askin.data.repository.MasterRepository
 import io.github.t45k.askin.data.repository.TrainingRecordRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -36,7 +37,11 @@ class TodayViewModelTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        repository = TrainingRecordRepository(
+            trainingRecordDao = database.trainingRecordDao(),
+            masterRepository = createMasterRepository(),
+            clock = fixedClock,
+        )
     }
 
     @After
@@ -61,6 +66,12 @@ class TodayViewModelTest {
         val categoryId = database.categoryDao().insert(CategoryEntity(name = "下半身", displayOrder = 1))
         return database.exerciseDao().insert(ExerciseEntity(name = name, categoryId = categoryId, displayOrder = 1))
     }
+
+    private fun createMasterRepository(): MasterRepository = MasterRepository(
+        database = database,
+        categoryDao = database.categoryDao(),
+        exerciseDao = database.exerciseDao(),
+    )
 
     private companion object {
         val fixedClock: Clock = Clock.fixed(

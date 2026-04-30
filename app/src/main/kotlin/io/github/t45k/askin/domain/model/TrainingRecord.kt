@@ -6,7 +6,8 @@ import java.time.LocalDate
 data class TrainingRecord(
     val id: Long,
     val date: LocalDate,
-    val exerciseId: Long,
+    val categoryName: String,
+    val exerciseName: String,
     val reps: Int,
     val createdAt: Instant,
     val updatedAt: Instant,

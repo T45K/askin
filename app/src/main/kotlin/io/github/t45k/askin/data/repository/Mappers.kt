@@ -29,14 +29,14 @@ fun ExerciseEntity.toDomain(): Exercise = Exercise(
 fun TrainingRecordEntity.toDomain(): TrainingRecord = TrainingRecord(
     id = id,
     date = date,
-    exerciseId = exerciseId,
+    categoryName = categoryName,
+    exerciseName = exerciseName,
     reps = reps,
     createdAt = createdAt,
     updatedAt = updatedAt,
 )
 
 fun DailyExerciseRecordEntity.toDomain(): DailyTrainingRecord = DailyTrainingRecord(
-    exerciseId = exerciseId,
     exerciseName = exerciseName,
     categoryName = categoryName,
     reps = reps,

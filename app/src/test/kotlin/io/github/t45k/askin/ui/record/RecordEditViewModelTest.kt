@@ -40,13 +40,18 @@ class RecordEditViewModelTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        trainingRecordRepository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        val masterRepository = MasterRepository(
+            database = database,
+            categoryDao = database.categoryDao(),
+            exerciseDao = database.exerciseDao(),
+        )
+        trainingRecordRepository = TrainingRecordRepository(
+            trainingRecordDao = database.trainingRecordDao(),
+            masterRepository = masterRepository,
+            clock = fixedClock,
+        )
         viewModel = RecordEditViewModel(
-            masterRepository = MasterRepository(
-                database = database,
-                categoryDao = database.categoryDao(),
-                exerciseDao = database.exerciseDao(),
-            ),
+            masterRepository = masterRepository,
             addTrainingRecordUseCase = AddTrainingRecordUseCase(trainingRecordRepository),
             initialDate = LocalDate.of(2026, 4, 30),
         )

@@ -31,8 +31,8 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :id")
     suspend fun getById(id: Long): CategoryEntity?
 
-    @Query("UPDATE categories SET is_active = 0 WHERE id = :id")
-    suspend fun deactivate(id: Long)
+    @Query("DELETE FROM categories WHERE id = :id")
+    suspend fun delete(id: Long)
 
     @Query("SELECT COUNT(*) FROM categories")
     suspend fun count(): Int

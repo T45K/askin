@@ -46,7 +46,7 @@ class MasterViewModelTest {
     }
 
     @Test
-    fun addUpdateAndDeactivateCategoryUpdatesState() = runTest {
+    fun addUpdateAndDeleteCategoryUpdatesState() = runTest {
         viewModel.addCategory(" 腕 ", 1)
         val added = viewModel.uiState.first { state -> state.categories.any { it.category.name == "腕" } }
         val categoryId = added.categories.first().category.id
@@ -54,15 +54,15 @@ class MasterViewModelTest {
         viewModel.updateCategory(categoryId, "腕・肩", 2)
         val updated = viewModel.uiState.first { state -> state.categories.any { it.category.name == "腕・肩" } }
 
-        viewModel.deactivateCategory(categoryId)
-        val deactivated = viewModel.uiState.first { state -> state.categories.none { it.category.id == categoryId } }
+        viewModel.deleteCategory(categoryId)
+        val deleted = viewModel.uiState.first { state -> state.categories.none { it.category.id == categoryId } }
 
         assertEquals(2, updated.categories.first().category.displayOrder)
-        assertEquals(emptyList<Any>(), deactivated.categories)
+        assertEquals(emptyList<Any>(), deleted.categories)
     }
 
     @Test
-    fun addUpdateAndDeactivateExerciseUpdatesState() = runTest {
+    fun addUpdateAndDeleteExerciseUpdatesState() = runTest {
         viewModel.addCategory("胸", 1)
         val category = viewModel.uiState.first { it.categories.isNotEmpty() }.categories.first().category
 
@@ -77,13 +77,13 @@ class MasterViewModelTest {
             state.categories.first().exercises.any { it.name == "ワイドプッシュアップ" }
         }
 
-        viewModel.deactivateExercise(exerciseId)
-        val exerciseDeactivated = viewModel.uiState.first { state ->
+        viewModel.deleteExercise(exerciseId)
+        val exerciseDeleted = viewModel.uiState.first { state ->
             state.categories.first().exercises.none { it.id == exerciseId }
         }
 
         assertEquals(2, exerciseUpdated.categories.first().exercises.first().displayOrder)
-        assertEquals(emptyList<Any>(), exerciseDeactivated.categories.first().exercises)
+        assertEquals(emptyList<Any>(), exerciseDeleted.categories.first().exercises)
     }
 
     @Test

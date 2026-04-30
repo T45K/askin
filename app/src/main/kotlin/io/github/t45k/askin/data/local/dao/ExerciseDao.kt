@@ -34,11 +34,11 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises WHERE id = :id")
     suspend fun getById(id: Long): ExerciseEntity?
 
-    @Query("UPDATE exercises SET is_active = 0 WHERE id = :id")
-    suspend fun deactivate(id: Long)
+    @Query("DELETE FROM exercises WHERE id = :id")
+    suspend fun delete(id: Long)
 
-    @Query("UPDATE exercises SET is_active = 0 WHERE category_id = :categoryId")
-    suspend fun deactivateByCategoryId(categoryId: Long)
+    @Query("DELETE FROM exercises WHERE category_id = :categoryId")
+    suspend fun deleteByCategoryId(categoryId: Long)
 
     @Query("SELECT COUNT(*) FROM exercises")
     suspend fun count(): Int

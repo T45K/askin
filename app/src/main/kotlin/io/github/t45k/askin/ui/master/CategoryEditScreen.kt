@@ -26,7 +26,7 @@ import io.github.t45k.askin.domain.model.Category
 fun CategoryEditScreen(
     category: Category?,
     onSave: (name: String, displayOrder: Int) -> Unit,
-    onDeactivate: (() -> Unit)?,
+    onDelete: (() -> Unit)?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,9 +69,9 @@ fun CategoryEditScreen(
             OutlinedButton(onClick = onBack) {
                 Text("戻る")
             }
-            if (onDeactivate != null) {
-                OutlinedButton(onClick = onDeactivate) {
-                    Text("非表示")
+            if (onDelete != null) {
+                OutlinedButton(onClick = onDelete) {
+                    Text("削除")
                 }
             }
         }

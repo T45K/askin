@@ -39,14 +39,14 @@ class TrainingRecordRepositoryTest {
 
     @Test
     fun addRepsAddsToExistingDailyExerciseRecord() = runTest {
-        val exerciseId = insertExercise(name = "腕立て伏せ")
+        val exerciseId = insertExercise(name = "腕立て伏せ", categoryName = "胸")
         val date = LocalDate.of(2026, 4, 30)
-        val repository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        val repository = createRepository()
 
         repository.addReps(date, exerciseId, 30)
         repository.addReps(date, exerciseId, 20)
 
-        val record = repository.getRecord(date, exerciseId)
+        val record = repository.getRecord(date, "胸", "腕立て伏せ")
         val summary = repository.getDailySummary(date)
 
         assertNotNull(record)
@@ -60,7 +60,7 @@ class TrainingRecordRepositoryTest {
         val pushUpId = insertExercise(name = "腕立て伏せ", displayOrder = 1)
         val squatId = insertExercise(name = "スクワット", displayOrder = 2)
         val date = LocalDate.of(2026, 4, 30)
-        val repository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        val repository = createRepository()
 
         repository.addReps(date, pushUpId, 30)
         repository.addReps(date, squatId, 60)
@@ -76,7 +76,7 @@ class TrainingRecordRepositoryTest {
     fun addRepsRejectsZeroOrNegativeReps() = runTest {
         val exerciseId = insertExercise(name = "腕立て伏せ")
         val date = LocalDate.of(2026, 4, 30)
-        val repository = TrainingRecordRepository(database.trainingRecordDao(), fixedClock)
+        val repository = createRepository()
 
         try {
             repository.addReps(date, exerciseId, 0)
@@ -90,13 +90,60 @@ class TrainingRecordRepositoryTest {
         }
     }
 
-    private suspend fun insertExercise(name: String, displayOrder: Int = 1): Long {
-        val categoryId = database.categoryDao().insert(
-            CategoryEntity(
-                name = "テストカテゴリ$name",
-                displayOrder = displayOrder,
-            ),
-        )
+    @Test
+    fun addRepsKeepsExerciseNameSnapshotAfterMasterDeletion() = runTest {
+        val categoryId = insertCategory(name = "胸", displayOrder = 1)
+        val exerciseId = insertExercise(categoryId = categoryId, name = "腕立て伏せ", displayOrder = 1)
+        val date = LocalDate.of(2026, 4, 30)
+        val repository = createRepository()
+        val masterRepository = createMasterRepository()
+
+        repository.addReps(date, exerciseId, 30)
+        masterRepository.deleteExercise(exerciseId)
+
+        val summary = repository.getDailySummary(date)
+
+        assertEquals(30, summary.totalReps)
+        assertEquals(listOf("腕立て伏せ"), summary.records.map { it.exerciseName })
+        assertEquals(listOf("胸"), summary.records.map { it.categoryName })
+    }
+
+    @Test
+    fun addRepsKeepsCategoryNameSnapshotAfterCategoryDeletion() = runTest {
+        val categoryId = insertCategory(name = "脚", displayOrder = 1)
+        val exerciseId = insertExercise(categoryId = categoryId, name = "スクワット", displayOrder = 1)
+        val date = LocalDate.of(2026, 4, 30)
+        val repository = createRepository()
+        val masterRepository = createMasterRepository()
+
+        repository.addReps(date, exerciseId, 60)
+        masterRepository.deleteCategory(categoryId)
+
+        val summary = repository.getDailySummary(date)
+
+        assertEquals(60, summary.totalReps)
+        assertEquals(listOf("スクワット"), summary.records.map { it.exerciseName })
+        assertEquals(listOf("脚"), summary.records.map { it.categoryName })
+        assertEquals(emptyList<ExerciseEntity>(), database.exerciseDao().getAllExercises())
+    }
+
+    private suspend fun insertCategory(name: String, displayOrder: Int = 1): Long = database.categoryDao().insert(
+        CategoryEntity(
+            name = name,
+            displayOrder = displayOrder,
+        ),
+    )
+
+    private suspend fun insertExercise(
+        name: String,
+        displayOrder: Int = 1,
+        categoryName: String = "テストカテゴリ$name",
+    ): Long {
+        val categoryId = insertCategory(name = categoryName, displayOrder = displayOrder)
+        return insertExercise(categoryId = categoryId, name = name, displayOrder = displayOrder)
+    }
+
+    private suspend fun insertExercise(categoryId: Long, name: String, displayOrder: Int = 1): Long {
         return database.exerciseDao().insert(
             ExerciseEntity(
                 categoryId = categoryId,
@@ -105,6 +152,18 @@ class TrainingRecordRepositoryTest {
             ),
         )
     }
+
+    private fun createRepository(): TrainingRecordRepository = TrainingRecordRepository(
+        trainingRecordDao = database.trainingRecordDao(),
+        masterRepository = createMasterRepository(),
+        clock = fixedClock,
+    )
+
+    private fun createMasterRepository(): MasterRepository = MasterRepository(
+        database = database,
+        categoryDao = database.categoryDao(),
+        exerciseDao = database.exerciseDao(),
+    )
 
     private companion object {
         val fixedClock: Clock = Clock.fixed(
