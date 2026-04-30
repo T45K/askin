@@ -1,5 +1,9 @@
 package io.github.t45k.askin
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +45,8 @@ import io.github.t45k.askin.ui.today.TodayScreen
 import io.github.t45k.askin.ui.today.TodayViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+
+private const val ScreenTransitionDurationMillis = 120
 
 @Composable
 fun AskinApp() {
@@ -112,6 +118,38 @@ fun AskinApp() {
                     navController = navController,
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
+                    enterTransition = {
+                        fadeIn(
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    exitTransition = {
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popEnterTransition = {
+                        fadeIn(
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
+                    popExitTransition = {
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = ScreenTransitionDurationMillis,
+                                easing = FastOutSlowInEasing,
+                            ),
+                        )
+                    },
                 ) {
                     composable("today") {
                         TodayScreen(
