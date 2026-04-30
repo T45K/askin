@@ -13,6 +13,7 @@ data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
+    val description: String = "",
     @ColumnInfo(name = "display_order")
     val displayOrder: Int,
     @ColumnInfo(name = "is_active")

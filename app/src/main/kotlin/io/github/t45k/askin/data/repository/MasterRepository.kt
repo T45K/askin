@@ -32,24 +32,26 @@ class MasterRepository(
         .getActiveExercises()
         .map { it.toDomain() }
 
-    suspend fun addCategory(name: String, displayOrder: Int): Long {
+    suspend fun addCategory(name: String, description: String, displayOrder: Int): Long {
         validateName(name, "Category name")
         return categoryDao.insert(
             CategoryEntity(
                 name = name.trim(),
+                description = description.trim(),
                 displayOrder = displayOrder,
                 isActive = true,
             ),
         )
     }
 
-    suspend fun updateCategory(id: Long, name: String, displayOrder: Int) {
+    suspend fun updateCategory(id: Long, name: String, description: String, displayOrder: Int) {
         validateId(id, "Category id")
         validateName(name, "Category name")
         val current = requireNotNull(categoryDao.getById(id)) { "Category was not found." }
         categoryDao.update(
             current.copy(
                 name = name.trim(),
+                description = description.trim(),
                 displayOrder = displayOrder,
             ),
         )
@@ -63,13 +65,14 @@ class MasterRepository(
         }
     }
 
-    suspend fun addExercise(name: String, categoryId: Long, displayOrder: Int): Long {
+    suspend fun addExercise(name: String, description: String, categoryId: Long, displayOrder: Int): Long {
         validateName(name, "Exercise name")
         validateId(categoryId, "Category id")
         requireNotNull(categoryDao.getById(categoryId)) { "Category was not found." }
         return exerciseDao.insert(
             ExerciseEntity(
                 name = name.trim(),
+                description = description.trim(),
                 categoryId = categoryId,
                 displayOrder = displayOrder,
                 isActive = true,
@@ -77,7 +80,7 @@ class MasterRepository(
         )
     }
 
-    suspend fun updateExercise(id: Long, name: String, categoryId: Long, displayOrder: Int) {
+    suspend fun updateExercise(id: Long, name: String, description: String, categoryId: Long, displayOrder: Int) {
         validateId(id, "Exercise id")
         validateName(name, "Exercise name")
         validateId(categoryId, "Category id")
@@ -86,6 +89,7 @@ class MasterRepository(
         exerciseDao.update(
             current.copy(
                 name = name.trim(),
+                description = description.trim(),
                 categoryId = categoryId,
                 displayOrder = displayOrder,
             ),

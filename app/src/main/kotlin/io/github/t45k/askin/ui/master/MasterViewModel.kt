@@ -45,24 +45,24 @@ class MasterViewModel(
         initialValue = MasterUiState(isLoading = true),
     )
 
-    fun addCategory(name: String, displayOrder: Int) = launchWithError {
-        masterRepository.addCategory(name, displayOrder)
+    fun addCategory(name: String, description: String, displayOrder: Int) = launchWithError {
+        masterRepository.addCategory(name, description, displayOrder)
     }
 
-    fun updateCategory(id: Long, name: String, displayOrder: Int) = launchWithError {
-        masterRepository.updateCategory(id, name, displayOrder)
+    fun updateCategory(id: Long, name: String, description: String, displayOrder: Int) = launchWithError {
+        masterRepository.updateCategory(id, name, description, displayOrder)
     }
 
     fun deactivateCategory(id: Long) = launchWithError {
         masterRepository.deactivateCategory(id)
     }
 
-    fun addExercise(name: String, categoryId: Long, displayOrder: Int) = launchWithError {
-        masterRepository.addExercise(name, categoryId, displayOrder)
+    fun addExercise(name: String, description: String, categoryId: Long, displayOrder: Int) = launchWithError {
+        masterRepository.addExercise(name, description, categoryId, displayOrder)
     }
 
-    fun updateExercise(id: Long, name: String, categoryId: Long, displayOrder: Int) = launchWithError {
-        masterRepository.updateExercise(id, name, categoryId, displayOrder)
+    fun updateExercise(id: Long, name: String, description: String, categoryId: Long, displayOrder: Int) = launchWithError {
+        masterRepository.updateExercise(id, name, description, categoryId, displayOrder)
     }
 
     fun deactivateExercise(id: Long) = launchWithError {

@@ -214,8 +214,8 @@ fun AskinApp() {
                     composable("category/new") {
                         CategoryEditScreen(
                             category = null,
-                            onSave = { name, displayOrder ->
-                                masterViewModel.addCategory(name, displayOrder)
+                            onSave = { name, description, displayOrder ->
+                                masterViewModel.addCategory(name, description, displayOrder)
                                 navController.popBackStack()
                             },
                             onDeactivate = null,
@@ -230,8 +230,8 @@ fun AskinApp() {
                         val category = masterUiState.categories.firstOrNull { it.category.id == categoryId }?.category
                         CategoryEditScreen(
                             category = category,
-                            onSave = { name, displayOrder ->
-                                masterViewModel.updateCategory(categoryId, name, displayOrder)
+                            onSave = { name, description, displayOrder ->
+                                masterViewModel.updateCategory(categoryId, name, description, displayOrder)
                                 navController.popBackStack()
                             },
                             onDeactivate = {
@@ -250,8 +250,8 @@ fun AskinApp() {
                             exercise = null,
                             categories = masterUiState.categories.map { it.category },
                             initialCategoryId = categoryId,
-                            onSave = { name, selectedCategoryId, displayOrder ->
-                                masterViewModel.addExercise(name, selectedCategoryId, displayOrder)
+                            onSave = { name, description, selectedCategoryId, displayOrder ->
+                                masterViewModel.addExercise(name, description, selectedCategoryId, displayOrder)
                                 navController.popBackStack()
                             },
                             onDeactivate = null,
@@ -270,8 +270,8 @@ fun AskinApp() {
                             exercise = exercise,
                             categories = masterUiState.categories.map { it.category },
                             initialCategoryId = exercise?.categoryId,
-                            onSave = { name, categoryId, displayOrder ->
-                                masterViewModel.updateExercise(exerciseId, name, categoryId, displayOrder)
+                            onSave = { name, description, categoryId, displayOrder ->
+                                masterViewModel.updateExercise(exerciseId, name, description, categoryId, displayOrder)
                                 navController.popBackStack()
                             },
                             onDeactivate = {

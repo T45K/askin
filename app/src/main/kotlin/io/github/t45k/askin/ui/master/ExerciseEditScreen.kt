@@ -31,13 +31,14 @@ fun ExerciseEditScreen(
     exercise: Exercise?,
     categories: List<Category>,
     initialCategoryId: Long?,
-    onSave: (name: String, categoryId: Long, displayOrder: Int) -> Unit,
+    onSave: (name: String, description: String, categoryId: Long, displayOrder: Int) -> Unit,
     onDeactivate: (() -> Unit)?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val firstCategoryId = categories.firstOrNull()?.id ?: 0L
     var name by remember(exercise?.id) { mutableStateOf(exercise?.name.orEmpty()) }
+    var description by remember(exercise?.id) { mutableStateOf(exercise?.description.orEmpty()) }
     var categoryId by remember(exercise?.id, initialCategoryId) {
         mutableLongStateOf(exercise?.categoryId ?: initialCategoryId ?: firstCategoryId)
     }
@@ -59,6 +60,13 @@ fun ExerciseEditScreen(
             modifier = Modifier.fillMaxWidth(),
             label = { Text("種目名") },
             singleLine = true,
+        )
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("説明") },
+            minLines = 3,
         )
         Text("カテゴリ", style = MaterialTheme.typography.titleSmall)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -82,7 +90,7 @@ fun ExerciseEditScreen(
             Button(
                 enabled = categoryId > 0,
                 onClick = {
-                    onSave(name, categoryId, displayOrderText.toIntOrNull() ?: 1)
+                    onSave(name, description, categoryId, displayOrderText.toIntOrNull() ?: 1)
                 },
             ) {
                 Text("保存")
