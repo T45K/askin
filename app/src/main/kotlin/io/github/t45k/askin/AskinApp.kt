@@ -2,8 +2,8 @@ package io.github.t45k.askin
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val ScreenTransitionDurationMillis = 120
+private const val ScreenTransitionOffsetDivisor = 4
 
 @Composable
 fun AskinApp() {
@@ -119,7 +120,8 @@ fun AskinApp() {
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
                     enterTransition = {
-                        fadeIn(
+                        slideInHorizontally(
+                            initialOffsetX = { it / ScreenTransitionOffsetDivisor },
                             animationSpec = tween(
                                 durationMillis = ScreenTransitionDurationMillis,
                                 easing = FastOutSlowInEasing,
@@ -127,7 +129,8 @@ fun AskinApp() {
                         )
                     },
                     exitTransition = {
-                        fadeOut(
+                        slideOutHorizontally(
+                            targetOffsetX = { -it / ScreenTransitionOffsetDivisor },
                             animationSpec = tween(
                                 durationMillis = ScreenTransitionDurationMillis,
                                 easing = FastOutSlowInEasing,
@@ -135,7 +138,8 @@ fun AskinApp() {
                         )
                     },
                     popEnterTransition = {
-                        fadeIn(
+                        slideInHorizontally(
+                            initialOffsetX = { -it / ScreenTransitionOffsetDivisor },
                             animationSpec = tween(
                                 durationMillis = ScreenTransitionDurationMillis,
                                 easing = FastOutSlowInEasing,
@@ -143,7 +147,8 @@ fun AskinApp() {
                         )
                     },
                     popExitTransition = {
-                        fadeOut(
+                        slideOutHorizontally(
+                            targetOffsetX = { it / ScreenTransitionOffsetDivisor },
                             animationSpec = tween(
                                 durationMillis = ScreenTransitionDurationMillis,
                                 easing = FastOutSlowInEasing,
