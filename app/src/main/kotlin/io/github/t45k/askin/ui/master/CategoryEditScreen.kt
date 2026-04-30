@@ -25,12 +25,13 @@ import io.github.t45k.askin.domain.model.Category
 @Composable
 fun CategoryEditScreen(
     category: Category?,
-    onSave: (name: String, displayOrder: Int) -> Unit,
+    onSave: (name: String, description: String, displayOrder: Int) -> Unit,
     onDeactivate: (() -> Unit)?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var name by remember(category?.id) { mutableStateOf(category?.name.orEmpty()) }
+    var description by remember(category?.id) { mutableStateOf(category?.description.orEmpty()) }
     var displayOrderText by remember(category?.id) { mutableStateOf((category?.displayOrder ?: 1).toString()) }
 
     Column(
@@ -51,6 +52,13 @@ fun CategoryEditScreen(
             singleLine = true,
         )
         OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("説明") },
+            minLines = 3,
+        )
+        OutlinedTextField(
             value = displayOrderText,
             onValueChange = { displayOrderText = it.filter(Char::isDigit) },
             modifier = Modifier.fillMaxWidth(),
@@ -61,7 +69,7 @@ fun CategoryEditScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
                 onClick = {
-                    onSave(name, displayOrderText.toIntOrNull() ?: 1)
+                    onSave(name, description, displayOrderText.toIntOrNull() ?: 1)
                 },
             ) {
                 Text("保存")
