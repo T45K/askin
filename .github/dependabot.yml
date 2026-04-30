@@ -1,0 +1,56 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - gradle
+    commit-message:
+      prefix: deps
+      include: scope
+    groups:
+      androidx-compose:
+        patterns:
+          - "androidx.compose*"
+          - "androidx.activity:activity-compose"
+          - "androidx.navigation:navigation-compose"
+      androidx-lifecycle:
+        patterns:
+          - "androidx.lifecycle:*"
+      androidx-room:
+        patterns:
+          - "androidx.room:*"
+      androidx-test:
+        patterns:
+          - "androidx.test*"
+          - "junit:junit"
+          - "org.robolectric:*"
+      kotlinx-coroutines:
+        patterns:
+          - "org.jetbrains.kotlinx:kotlinx-coroutines-*"
+      kotlin-toolchain:
+        patterns:
+          - "com.android.application"
+          - "com.google.devtools.ksp"
+          - "org.jetbrains.kotlin*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: ci
+      include: scope
