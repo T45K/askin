@@ -1,7 +1,9 @@
 package io.github.t45k.askin
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -48,6 +51,20 @@ import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+
+private const val TopLevelTransitionDurationMillis = 70
+private const val DetailTransitionDurationMillis = 90
+
+private val TopLevelRoutes = setOf("today", "history", "master", "settings")
+
+private fun isTopLevelRoute(route: String?): Boolean = route in TopLevelRoutes
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.transitionDurationMillis(): Int =
+    if (isTopLevelRoute(initialState.destination.route) && isTopLevelRoute(targetState.destination.route)) {
+        TopLevelTransitionDurationMillis
+    } else {
+        DetailTransitionDurationMillis
+    }
 
 @Composable
 fun AskinApp() {
@@ -137,10 +154,11 @@ fun AskinApp() {
                     navController = navController,
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
-                    enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None },
-                    popEnterTransition = { EnterTransition.None },
-                    popExitTransition = { ExitTransition.None },
+                    enterTransition = { fadeIn(tween(transitionDurationMillis())) },
+                    exitTransition = { fadeOut(tween(transitionDurationMillis())) },
+                    popEnterTransition = { fadeIn(tween(transitionDurationMillis())) },
+                    popExitTransition = { fadeOut(tween(transitionDurationMillis())) },
+                    sizeTransform = { null },
                 ) {
                     composable("today") {
                         val todayViewModel: TodayViewModel = viewModel(factory = TodayViewModel.factory(application.database))
