@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -61,7 +60,7 @@ fun MasterScreen(
         if (uiState.categories.isEmpty() && !uiState.isLoading) {
             Text(
                 text = "カテゴリと種目を追加しましょう",
-                color = Color(0xFF6D4C41),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -69,7 +68,7 @@ fun MasterScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -96,13 +95,13 @@ fun MasterScreen(
                             if (categoryWithExercises.category.description.isNotBlank()) {
                                 Text(
                                     text = categoryWithExercises.category.description,
-                                    color = Color(0xFF6D4C41),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     style = MaterialTheme.typography.bodyMedium,
                                 )
                             }
 
                             if (categoryWithExercises.exercises.isEmpty()) {
-                                Text("種目はまだありません", color = Color(0xFF8D6E63))
+                                Text("種目はまだありません", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             } else {
                                 categoryWithExercises.exercises.forEach { exercise ->
                                     Row(
@@ -114,7 +113,7 @@ fun MasterScreen(
                                             if (exercise.description.isNotBlank()) {
                                                 Text(
                                                     text = exercise.description,
-                                                    color = Color(0xFF8D6E63),
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                     style = MaterialTheme.typography.bodySmall,
                                                 )
                                             }

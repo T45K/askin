@@ -16,7 +16,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -64,7 +63,7 @@ fun RecordEditScreen(
         )
         uiState.errorMessage?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         if (uiState.isSaved) {
-            Text("保存しました", color = Color(0xFF2E7D32))
+            Text("保存しました", color = MaterialTheme.colorScheme.tertiary)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = onSaveClick) {

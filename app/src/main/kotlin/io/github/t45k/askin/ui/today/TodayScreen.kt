@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -42,14 +41,14 @@ fun TodayScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(text = uiState.date.toString(), color = Color(0xFF8D6E63))
+                Text(text = uiState.date.toString(), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     text = "合計 ${uiState.totalReps} 回",
                     style = MaterialTheme.typography.headlineMedium,
@@ -68,11 +67,11 @@ fun TodayScreen(
         }
 
         if (uiState.records.isEmpty() && !uiState.isLoading) {
-            Text("今日の筋トレを記録しましょう", color = Color(0xFF6D4C41))
+            Text("今日の筋トレを記録しましょう", color = MaterialTheme.colorScheme.onSurfaceVariant)
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(uiState.records, key = { "${it.categoryName}:${it.exerciseName}" }) { record ->
-                    Card(colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -81,7 +80,7 @@ fun TodayScreen(
                         ) {
                             Column {
                                 Text(record.exerciseName, fontWeight = FontWeight.Bold)
-                                Text(record.categoryName, color = Color(0xFF8D6E63))
+                                Text(record.categoryName, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             Text("${record.reps}回", fontWeight = FontWeight.Bold)
                         }
