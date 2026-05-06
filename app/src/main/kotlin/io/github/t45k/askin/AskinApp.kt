@@ -1,9 +1,7 @@
 package io.github.t45k.askin
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -50,9 +49,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-private const val ScreenTransitionDurationMillis = 120
-private const val ScreenTransitionOffsetDivisor = 4
-
 @Composable
 fun AskinApp() {
     val navController = rememberNavController()
@@ -71,17 +67,22 @@ fun AskinApp() {
     }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
-    val masterUiState by masterViewModel.uiState.collectAsStateWithLifecycle()
-    val todayViewModel: TodayViewModel = viewModel(factory = TodayViewModel.factory(application.database))
-    val todayUiState by todayViewModel.uiState.collectAsStateWithLifecycle()
-    val historyViewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.factory(application.database))
-    val historyUiState by historyViewModel.uiState.collectAsStateWithLifecycle()
     fun shareDate(dateText: String) {
         coroutineScope.launch {
             val date = runCatching { LocalDate.parse(dateText) }
                 .getOrDefault(Clock.System.todayIn(TimeZone.currentSystemDefault()))
             XShareLauncher.launch(context, shareTextUseCase(date))
+        }
+    }
+    fun navigateTopLevel(route: String) {
+        if (currentRoute == route) return
+
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
         }
     }
 
@@ -102,25 +103,25 @@ fun AskinApp() {
                     NavigationBar {
                         NavigationBarItem(
                             selected = currentRoute == "today",
-                            onClick = { navController.navigate("today") },
+                            onClick = { navigateTopLevel("today") },
                             label = { Text("今日") },
                             icon = { Text("💪") },
                         )
                         NavigationBarItem(
                             selected = currentRoute == "history",
-                            onClick = { navController.navigate("history") },
+                            onClick = { navigateTopLevel("history") },
                             label = { Text("履歴") },
                             icon = { Text("📅") },
                         )
                         NavigationBarItem(
                             selected = currentRoute == "master",
-                            onClick = { navController.navigate("master") },
+                            onClick = { navigateTopLevel("master") },
                             label = { Text("マスタ") },
                             icon = { Text("⚙️") },
                         )
                         NavigationBarItem(
                             selected = currentRoute == "settings",
-                            onClick = { navController.navigate("settings") },
+                            onClick = { navigateTopLevel("settings") },
                             label = { Text("設定") },
                             icon = { Text("ℹ️") },
                         )
@@ -131,44 +132,15 @@ fun AskinApp() {
                     navController = navController,
                     startDestination = "today",
                     modifier = Modifier.padding(innerPadding),
-                    enterTransition = {
-                        slideInHorizontally(
-                            initialOffsetX = { it / ScreenTransitionOffsetDivisor },
-                            animationSpec = tween(
-                                durationMillis = ScreenTransitionDurationMillis,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        )
-                    },
-                    exitTransition = {
-                        slideOutHorizontally(
-                            targetOffsetX = { -it / ScreenTransitionOffsetDivisor },
-                            animationSpec = tween(
-                                durationMillis = ScreenTransitionDurationMillis,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        )
-                    },
-                    popEnterTransition = {
-                        slideInHorizontally(
-                            initialOffsetX = { -it / ScreenTransitionOffsetDivisor },
-                            animationSpec = tween(
-                                durationMillis = ScreenTransitionDurationMillis,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        )
-                    },
-                    popExitTransition = {
-                        slideOutHorizontally(
-                            targetOffsetX = { it / ScreenTransitionOffsetDivisor },
-                            animationSpec = tween(
-                                durationMillis = ScreenTransitionDurationMillis,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        )
-                    },
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None },
                 ) {
                     composable("today") {
+                        val todayViewModel: TodayViewModel = viewModel(factory = TodayViewModel.factory(application.database))
+                        val todayUiState by todayViewModel.uiState.collectAsStateWithLifecycle()
+
                         TodayScreen(
                             uiState = todayUiState,
                             onAddRecordClick = { navController.navigate("record/$it") },
@@ -176,6 +148,9 @@ fun AskinApp() {
                         )
                     }
                     composable("history") {
+                        val historyViewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.factory(application.database))
+                        val historyUiState by historyViewModel.uiState.collectAsStateWithLifecycle()
+
                         HistoryScreen(
                             uiState = historyUiState,
                             onDateSelected = historyViewModel::selectDate,
@@ -184,6 +159,9 @@ fun AskinApp() {
                         )
                     }
                     composable("master") {
+                        val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
+                        val masterUiState by masterViewModel.uiState.collectAsStateWithLifecycle()
+
                         MasterScreen(
                             uiState = masterUiState,
                             onAddCategoryClick = { navController.navigate("category/new") },
@@ -225,6 +203,8 @@ fun AskinApp() {
                         )
                     }
                     composable("category/new") {
+                        val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
+
                         CategoryEditScreen(
                             category = null,
                             onSave = { name, description, displayOrder ->
@@ -239,6 +219,8 @@ fun AskinApp() {
                         route = "category/{categoryId}",
                         arguments = listOf(navArgument("categoryId") { type = NavType.LongType }),
                     ) { backStackEntry ->
+                        val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
+                        val masterUiState by masterViewModel.uiState.collectAsStateWithLifecycle()
                         val categoryId = backStackEntry.arguments?.getLong("categoryId") ?: 0L
                         val category = masterUiState.categories.firstOrNull { it.category.id == categoryId }?.category
                         CategoryEditScreen(
@@ -258,6 +240,8 @@ fun AskinApp() {
                         route = "exercise/new/{categoryId}",
                         arguments = listOf(navArgument("categoryId") { type = NavType.LongType }),
                     ) { backStackEntry ->
+                        val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
+                        val masterUiState by masterViewModel.uiState.collectAsStateWithLifecycle()
                         val categoryId = backStackEntry.arguments?.getLong("categoryId") ?: 0L
                         ExerciseEditScreen(
                             exercise = null,
@@ -275,6 +259,8 @@ fun AskinApp() {
                         route = "exercise/{exerciseId}",
                         arguments = listOf(navArgument("exerciseId") { type = NavType.LongType }),
                     ) { backStackEntry ->
+                        val masterViewModel: MasterViewModel = viewModel(factory = MasterViewModel.factory(application.database))
+                        val masterUiState by masterViewModel.uiState.collectAsStateWithLifecycle()
                         val exerciseId = backStackEntry.arguments?.getLong("exerciseId") ?: 0L
                         val exercise = masterUiState.categories
                             .flatMap { it.exercises }
