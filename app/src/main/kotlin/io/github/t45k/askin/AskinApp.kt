@@ -12,7 +12,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -86,11 +86,16 @@ fun AskinApp() {
     }
 
     MaterialTheme(
-        colorScheme = lightColorScheme(
+        colorScheme = darkColorScheme(
             primary = Color(0xFFFF8A65),
             secondary = Color(0xFF81C784),
-            background = Color(0xFFFFF8EC),
-            surface = Color.White,
+            tertiary = Color(0xFF81C784),
+            background = Color(0xFF121212),
+            surface = Color(0xFF1E1E1E),
+            surfaceVariant = Color(0xFF2A2A2A),
+            onBackground = Color(0xFFE0E0E0),
+            onSurface = Color(0xFFE0E0E0),
+            onSurfaceVariant = Color(0xFFBDBDBD),
         ),
     ) {
         Surface(
